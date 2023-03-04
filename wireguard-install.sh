@@ -56,6 +56,8 @@ function checkOS() {
 			echo "Your version of CentOS (${VERSION_ID}) is not supported. Please use CentOS 8 or later"
 			exit 1
 		fi
+	elif [[ ${OS} == 'opensuse-tumbleweed' ]]; then
+		OS=opensuse
 	elif [[ -e /etc/oracle-release ]]; then
 		source /etc/os-release
 		OS=oracle
@@ -196,6 +198,8 @@ function installWireGuard() {
 			yum install -y qrencode # not available on release 9
 		fi
 		yum install -y wireguard-tools iptables
+	elif [[ ${OS} == 'opensuse' ]]; then
+		zypper install -y wireguard-tools iptables qrencode
 	elif [[ ${OS} == 'oracle' ]]; then
 		dnf install -y oraclelinux-developer-release-el8
 		dnf config-manager --disable -y ol8_developer
@@ -454,6 +458,8 @@ function uninstallWg() {
 			if [[ ${VERSION_ID} == 8* ]]; then
 				yum remove --noautoremove kmod-wireguard qrencode
 			fi
+		elif [[ ${OS} == 'opensuse' ]]; then
+			zypper remove -y wireguard-tools qrencode
 		elif [[ ${OS} == 'oracle' ]]; then
 			yum remove --noautoremove wireguard-tools qrencode
 		elif [[ ${OS} == 'arch' ]]; then
